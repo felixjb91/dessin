@@ -1,0 +1,9 @@
+    // objet "Dummy" qui stock l'info sur comment est codé le dessin (des points avec la couleur et le rayon)
+    return {
+      isDummy: true,
+      x: lastPoint.x,
+      y: lastPoint.y,
+      c: null,
+      r: null };
+
+  }

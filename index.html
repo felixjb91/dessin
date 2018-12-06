@@ -625,9 +625,14 @@
               <span class="btn"
                     v-on:click="loadSave(item)">load</span>
             </div>
+
+            <!-------- MOI -------!>
+            <span class="btn" v-on:click="saveFile">
+              Entregister!
+            </<span>
+            <!---!--- MOI ---!---!>
           </div>
         </div>
-
       </div>
 
       <div class="btn-row">
@@ -639,8 +644,11 @@
   </div>
 </div>
 
+<script src="https://unpkg.com/axios/dist/axios.min.js">
+  const axios = require('axios')
+</script>
 <script src='//static.codepen.io/assets/common/stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js'></script><script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js'></script>
-<script >var app = new Vue({
+<script> var app = new Vue({
   el: '#draw',
   data: {
     history: [],
@@ -742,7 +750,32 @@ saveItem: () => {
 loadSave: item => {
   app.history = item.history.slice();
   draw.redraw();
-} } });
+},
+//<!-------- MOI -------!>
+saveFile : item => {
+  //app.history = item.history.slice();
+  // var contentHistory = ''
+  // app.history.forEach((item, i) => {
+  //   contentHistory += JSON.stringify(item)
+  // })
+  //console.log(contentHistory)
+  console.log(JSON.stringify(app.history))
+
+
+  var zis = this
+  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/createfile?BUCKET_NAME=lecturefichierfelix&CONTENT_FILE='+JSON.stringify(app.history)+'&FILE_NAME=dessinTest')
+    .then(function (response) {
+      console.log(response.data);
+      zis.contenuF = response.data
+    })
+    .catch(function (error) {
+      // handle error
+      console.log(error);
+    });
+
+}
+//<!-------- MOI -------!>
+} });
 
 
 
