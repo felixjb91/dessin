@@ -810,15 +810,16 @@ saveFile : item => {
   }
 
   axios({
-    method: 'post',
+    method: 'POST',
     url: 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/',
     headers: {
-      'Access-Control-Allow-Origin': 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization,Upgrade-Insecure-Requests,X-Requested-With, Origin,Accept,Access-Control-Allow-Headers',
-      'Content-Type': 'text/plan',
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods' : 'POST,GET,OPTION',
+      'Access-Control-Allow-Headers': 'Content-Type,Authorization,Upgrade-Insecure-Requests,X-Requested-With,Accept,Access-Control-Allow-Headers',
+      'Content-Type': 'application/json',
       'Access-Control-Allow-Credentials': 'true'
     },
-    data: toDataPost
+    data: JSON.stringify(toDataPost)
   })
     .then(function (response) {
         console.log(response.data);
