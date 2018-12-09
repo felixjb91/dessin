@@ -201,6 +201,7 @@
   .btn {
     display: inline-block;
     margin-top: 10px;
+    margin-top: 10px;
     padding: 10px 20px;
     font-weight: 400;
     font-size: 16px;
@@ -352,6 +353,17 @@
     color: #8c8c8c;
   }
 
+  .import-item {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+    width: 150px;
+    height: 60px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
   .color-item {
     position: relative;
     display: inline-block;
@@ -458,15 +470,16 @@
     justify-content: space-between;
     align-items: center;
   }
+
   </style></head><body>
 <div id="draw">
   <div class="welcome-bg" v-if="popups.showWelcome">
     <div class="welcome">
       <h1 class="fade-up">Vue JS draw</h1>
       <h2 class="fade-up">
-        By Lewi Hussey
+        By Lixfe & Jhon
       </h2>
-      <a href="//twitter.com/lewitje" target="blank" title="Lewi Hussey on Twitter" class="fade-up">@lewitje</a>
+      <a href="https://github.com/felixjb91/dessin" target="blank" title="Lixfe and Jhon in the place!" class="fade-up">@instaBoss</a>
       <span class="btn fade-up"
             title="Close"
             v-on:click="popups.showWelcome = false">
@@ -627,19 +640,48 @@
             </div>
 
             <!-------- MOI -------!>
-            <span class="btn" v-on:click="saveFile">
-              Entregister!
-            </<span>
+            <div>
+              <input  type="text"
+                      placeholder="Save name"
+                      v-model="nomFichierstoSave">
+              <span class="btn" v-on:click="saveFile">
+                Entregister!
+              </<span>
+            </div>
+
             <!---!--- MOI ---!---!>
           </div>
         </div>
       </div>
 
+      <!------------------------------------------------------------------------------------------------------------->
       <div class="btn-row">
-        <button v-on:click="popups.showWelcome = true" title="Made by Lewi">
+        <button title="import dessin"
+                v-on:click="mounted" v-on:click="mounted"
+                v-bind:class="{ active: popups.showImport }">
+          <i class="ion ion-android-download"></i>
+        </button>
+
+        <div class="popup" v-if="popups.showImport">
+          <div class="popup-title">
+            Dessins sauvegardés &nbsp;
+          </div>
+
+          <div v-for="fichierDessin in nomFichiers" class="import-item">
+            <h4>{{fichierDessin}}&nbsp;&nbsp;&nbsp;</h4>
+            <span class="btn"
+                  v-on:click="importDessin(fichierDessin)">import</span>
+          </div>
+        </div>
+        <!------------------------------------------------------------------------------------------------------------->
+      </div>
+
+      <div class="btn-row">
+        <button v-on:click="popups.showWelcome = true" title="Made by Lixfe">
           <i class="ion ion-heart"></i>
         </button>
       </div>
+
     </div>
   </div>
 </div>
@@ -658,7 +700,12 @@
       showSize: false,
       showWelcome: true,
       showSave: false,
-      showOptions: false },
+      showOptions: false,
+      showImport: false },
+
+    nomFichiers:null,
+
+    nomFichierstoSave:null,
 
     options: {
       restrictY: false,
@@ -691,9 +738,9 @@
     weights: [2, 4, 6] },
 
   methods: {
-    removeHistoryItem: () => {
-    app.history.splice(app.history.length - 2, 1);
-draw.redraw();
+removeHistoryItem: () => {
+    app.history.splice(app.history.length - 2, 1)
+    draw.redraw()
 },
 removeAllHistory: () => {
   app.history = [];
@@ -751,30 +798,70 @@ loadSave: item => {
   app.history = item.history.slice();
   draw.redraw();
 },
-//<!-------- MOI -------!>
+//<!--------------------------------------------------------------- MOI -------------------------------------------------------!>
 saveFile : item => {
-  //app.history = item.history.slice();
-  // var contentHistory = ''
-  // app.history.forEach((item, i) => {
-  //   contentHistory += JSON.stringify(item)
-  // })
-  //console.log(contentHistory)
   console.log(JSON.stringify(app.history))
 
+  var toDataPost = {
+    bucket: 'appdessin',
+    filename: app.nomFichierstoSave,
+    body : app.history,
 
-  var zis = this
-  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/createfile?BUCKET_NAME=lecturefichierfelix&CONTENT_FILE='+JSON.stringify(app.history)+'&FILE_NAME=dessinTest')
+  }
+
+  axios({
+    method: 'post',
+    url: 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/',
+    headers: {
+      'Access-Control-Allow-Origin': 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com',
+      'Access-Control-Allow-Headers': 'Content-Type,Authorization,Upgrade-Insecure-Requests,X-Requested-With, Origin,Accept,Access-Control-Allow-Headers',
+      'Content-Type': 'text/plan',
+      'Access-Control-Allow-Credentials': 'true'
+    },
+    data: toDataPost
+  })
+    .then(function (response) {
+        console.log(response.data);
+      })
+      .catch(function (error) {
+        console.log('voici l\'erreur : '+error);
+      });
+},
+mounted: function () {
+  app.popups.showImport = (!app.popups.showImport)
+  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/getlistfile?BUCKET_NAME=appdessin')
     .then(function (response) {
       console.log(response.data);
-      zis.contenuF = response.data
+      app.nomFichiers = response.data
     })
     .catch(function (error) {
       // handle error
       console.log(error);
     });
+},
+importDessin: function (name) {
+  var historyItem = {
+    name: name,
+    history: []
+  }
+  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/?BUCKET_NAME=appdessin&FILE_NAME=' + name)
+    .then(function (response) {
+      console.log(response.data);
+      historyItem.history = response.data
+      console.log(app.history)
+    })
+    .catch(function (error) {
+      // handle error
+      console.log("Le getFile à échoué");
+    });
+  console.log("pret à etre push")
+  console.log(app.history)
+  app.save.saveItems.push(historyItem);
+  app.save.name = "";
 
 }
-//<!-------- MOI -------!>
+
+//<!-------------------------------------------------------------------- MOI ------------------------------------------------------------------!>
 } });
 
 
