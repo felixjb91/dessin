@@ -488,7 +488,7 @@
     </div>
   </div>
   <div class="app-wrapper">
-    <canvas id="canvas">
+    <canvas id="c">
     </canvas>
     <div class="cursor" id="cursor"></div>
     <div class="controls">
@@ -657,7 +657,7 @@
       <!------------------------------------------------------------------------------------------------------------->
       <div class="btn-row">
         <button title="import dessin"
-                v-on:click="mounted" v-on:click="mounted"
+                v-on:click="mounted"
                 v-bind:class="{ active: popups.showImport }">
           <i class="ion ion-android-download"></i>
         </button>
@@ -668,11 +668,21 @@
           </div>
 
           <div v-for="fichierDessin in nomFichiers" class="import-item">
-            <h4>{{fichierDessin}}&nbsp;&nbsp;&nbsp;</h4>
+            <button title="delete dessin"
+                    v-on:click="deleteDessin(fichierDessin);mounted()">
+              <i class="icon ion-android-delete"></i>
+            </button>
+            &nbsp;&nbsp;&nbsp;
+            <h4>{{fichierDessin}}</h4>
+            &nbsp;&nbsp;&nbsp;
             <span class="btn"
                   v-on:click="importDessin(fichierDessin)">import</span>
           </div>
         </div>
+        <button title="Save as Image"
+                v-on:click="savePNG">
+          <i class=" icon ion-android-arrow-forward"></i>
+        </button>
         <!------------------------------------------------------------------------------------------------------------->
       </div>
 
@@ -686,190 +696,190 @@
   </div>
 </div>
 
+
+<script src="canvas-toBlob.js"></script>
+<script src="fabric.min.js"></script>
+<script src="jquery-3.3.1.min.js"></script>
+<script src="FileSaver.js"></script>
 <script src="https://unpkg.com/axios/dist/axios.min.js">
   const axios = require('axios')
 </script>
-<script src='//static.codepen.io/assets/common/stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js'></script><script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js'></script>
-<script> var app = new Vue({
-  el: '#draw',
-  data: {
-    history: [],
-    color: '#13c5f7',
-    popups: {
-      showColor: false,
-      showSize: false,
-      showWelcome: true,
-      showSave: false,
-      showOptions: false,
-      showImport: false },
-
-    nomFichiers:null,
-
-    nomFichierstoSave:null,
-
-    options: {
-      restrictY: false,
-      restrictX: false },
-
-    save: {
-      name: '',
-      saveItems: [] },
-
-    size: 12,
-    colors: [
-      '#d4f713',
-      '#13f7ab',
-      '#13f3f7',
-      '#13c5f7',
-      '#138cf7',
-      '#1353f7',
-      '#2d13f7',
-      '#7513f7',
-      '#a713f7',
-      '#d413f7',
-      '#f713e0',
-      '#f71397',
-      '#f7135b',
-      '#f71313',
-      '#f76213',
-      '#f79413',
-      '#f7e013'],
-    sizes: [6, 12, 24, 48],
-    weights: [2, 4, 6] },
-
-  methods: {
-removeHistoryItem: () => {
-    app.history.splice(app.history.length - 2, 1)
-    draw.redraw()
-},
-removeAllHistory: () => {
-  app.history = [];
-  draw.redraw();
-},
-simplify: () => {
-  var simpleHistory = [];
-  app.history.forEach((item, i) => {
-    if (i % 6 !== 1 || item.isDummy) {
-    simpleHistory.push(item);
-  }
-});
-  app.history = simpleHistory;
-  draw.redraw();
-},
-jumble: () => {
-  var simpleHistory = [];
-  app.history.forEach((item, i) => {
-    item.r += Math.sin(i * 20) * 5;
-});
-  app.history = app.shuffle(app.history);
-  draw.redraw();
-},
-shuffle: a => {
-  var b = [];
-
-  a.forEach((item, i) => {
-    if (!item.isDummy) {
-    var l = b.length;
-    var r = Math.floor(l * Math.random());
-    b.splice(r, 0, item);
-  }
-});
-
-  for (var i = 0; i < b.length; i++) {if (window.CP.shouldStopExecution(0)) break;
-    if (i % 20 === 1) {
-      b.push(draw.getDummyItem());
-    }
-  }window.CP.exitedLoop(0);
-
-  return b;
-},
-saveItem: () => {
-  if (app.save.name.length > 2) {
-    var historyItem = {
-      history: app.history.slice(),
-      name: app.save.name };
 
 
-    app.save.saveItems.push(historyItem);
-    app.save.name = "";
-  }
-},
-loadSave: item => {
-  app.history = item.history.slice();
-  draw.redraw();
-},
-//<!--------------------------------------------------------------- MOI -------------------------------------------------------!>
-saveFile : item => {
-  console.log(JSON.stringify(app.history))
 
-  var toDataPost = {
-    bucket: 'appdessin',
-    filename: app.nomFichierstoSave,
-    body : app.history,
-
-  }
-
-  axios({
-    method: 'POST',
-    url: 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/',
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods' : 'POST,GET,OPTION',
-      'Access-Control-Allow-Headers': 'Content-Type,Authorization,Upgrade-Insecure-Requests,X-Requested-With,Accept,Access-Control-Allow-Headers',
-      'Content-Type': 'application/json',
-      'Access-Control-Allow-Credentials': 'true'
+<script src='//static.codepen.io/assets/common/stopExecutionOnTimeout-41c52890748cd7143004e05d3c5f786c66b19939c4500ce446314d1748483e13.js'></script>
+<script src='https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.min.js'></script>
+<script type="text/javascript"> var app = new Vue({
+    el: '#draw',
+    data: {
+      history: [],
+      color: '#13c5f7',
+      popups: {
+        bucketName: 'appdessin',
+        drawCanvas:null,
+        showColor: false,
+        showSize: false,
+        showWelcome: true,
+        showSave: false,
+        showOptions: false,
+        showImport: false },
+      nomFichiers:null,
+      nomFichierstoSave:null,
+      options: {
+        restrictY: false,
+        restrictX: false },
+      save: {
+        name: '',
+        saveItems: [] },
+      size: 12,
+      colors: [
+        '#d4f713',
+        '#13f7ab',
+        '#13f3f7',
+        '#13c5f7',
+        '#138cf7',
+        '#1353f7',
+        '#2d13f7',
+        '#7513f7',
+        '#a713f7',
+        '#d413f7',
+        '#f713e0',
+        '#f71397',
+        '#f7135b',
+        '#f71313',
+        '#f76213',
+        '#f79413',
+        '#f7e013'],
+      sizes: [6, 12, 24, 48],
+      weights: [2, 4, 6] },
+    methods: {
+      removeHistoryItem: () => {
+      app.history.splice(app.history.length - 2, 1)
+      draw.redraw()
     },
-    data: JSON.stringify(toDataPost)
-  })
-    .then(function (response) {
-        console.log(response.data);
-      })
-      .catch(function (error) {
-        console.log('voici l\'erreur : '+error);
+    removeAllHistory: () => {
+      app.history = [];
+      draw.redraw();
+    },
+    simplify: () => {
+      var simpleHistory = [];
+      app.history.forEach((item, i) => {
+        if (i % 6 !== 1 || item.isDummy) {
+        simpleHistory.push(item);
+        }
       });
-},
-mounted: function () {
-  app.popups.showImport = (!app.popups.showImport)
-  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/getlistfile?BUCKET_NAME=appdessin')
-    .then(function (response) {
-      console.log(response.data);
-      app.nomFichiers = response.data
-    })
-    .catch(function (error) {
-      // handle error
-      console.log(error);
+      app.history = simpleHistory;
+      draw.redraw();
+    },
+    jumble: () => {
+      var simpleHistory = [];
+      app.history.forEach((item, i) => {
+        item.r += Math.sin(i * 20) * 5;
     });
-},
-importDessin: function (name) {
-  var historyItem = {
-    name: name,
-    history: []
-  }
-  axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/?BUCKET_NAME=appdessin&FILE_NAME=' + name)
-    .then(function (response) {
-      console.log(response.data);
-      historyItem.history = response.data
+      app.history = app.shuffle(app.history);
+      draw.redraw();
+    },
+    shuffle: a => {
+      var b = [];
+      a.forEach((item, i) => {
+        if (!item.isDummy) {
+        var l = b.length;
+        var r = Math.floor(l * Math.random());
+        b.splice(r, 0, item);
+      }
+    });
+      for (var i = 0; i < b.length; i++) {if (window.CP.shouldStopExecution(0)) break;
+        if (i % 20 === 1) {
+          b.push(draw.getDummyItem());
+        }
+      }window.CP.exitedLoop(0);
+      return b;
+    },
+    saveItem: () => {
+      if (app.save.name.length > 2) {
+        var historyItem = {
+          history: app.history.slice(),
+          name: app.save.name };
+        app.save.saveItems.push(historyItem);
+        app.save.name = "";
+      }
+    },
+    loadSave: item => {
+      app.history = item.history.slice();
+      draw.redraw();
+    },
+//<!----------------------------------------------------Fonctions AWS------------------------------------------------!>
+    saveFile : item => {
+      console.log(JSON.stringify(app.history))
+      var toDataPost = {
+        bucket: 'appdessin',
+        filename: app.nomFichierstoSave,
+        body : app.history,
+      }
+      axios({
+        method: 'POST',
+        url: 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/',
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods' : 'POST,GET,OPTION',
+          'Access-Control-Allow-Headers': 'Content-Type,Authorization,Upgrade-Insecure-Requests,X-Requested-With,Accept,Access-Control-Allow-Headers',
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Credentials': 'true'
+        },
+        data: JSON.stringify(toDataPost)
+      })
+        .then(function (response) {
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.log('voici l\'erreur : '+error);
+        });
+    },
+    mounted: function () {
+      app.popups.showImport = (!app.popups.showImport)
+      axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/getlistfile?BUCKET_NAME=appdessin')
+        .then(function (response) {
+          console.log(response.data);
+          app.nomFichiers = response.data
+        })
+        .catch(function (error) {
+          // handle error
+          console.log(error);
+        });
+    },
+    importDessin: function (name) {
+      var historyItem = {
+        name: name,
+        history: []
+      }
+      axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/?BUCKET_NAME=appdessin&FILE_NAME=' + name)
+        .then(function (response) {
+          console.log(response.data);
+          historyItem.history = response.data
+          console.log(app.history)
+        })
+        .catch(function (error) {
+          // handle error
+          console.log("Le getFile à échoué");
+        });
+      console.log("pret à etre push")
       console.log(app.history)
-    })
-    .catch(function (error) {
-      // handle error
-      console.log("Le getFile à échoué");
-    });
-  console.log("pret à etre push")
-  console.log(app.history)
-  app.save.saveItems.push(historyItem);
-  app.save.name = "";
-
-}
-
-//<!-------------------------------------------------------------------- MOI ------------------------------------------------------------------!>
-} });
-
-
-
+      app.save.saveItems.push(historyItem);
+      app.save.name = "";
+    },
+    savePNG: function () {
+      var canvas = document.getElementById('c');
+      canvas.toBlob(function (blob) {
+        saveAs(blob, "myIMG.png");
+        console.log(blob);
+      })
+    }
+  }
+});
+//<!-------------------------------------------------FIN Fonctions AWS------------------------------------------------!>
 class Draw {
   constructor() {
-    this.c = document.getElementById('canvas');
+    this.c = document.getElementById('c');
     this.ctx = this.c.getContext('2d');
 
     this.mouseDown = false;
@@ -884,6 +894,7 @@ class Draw {
 
     this.redraw();
   }
+
 
   listen() {
     this.c.addEventListener('mousedown', e => {
