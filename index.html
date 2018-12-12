@@ -644,12 +644,13 @@
               <input  type="text"
                       placeholder="Save name"
                       v-model="nomFichierstoSave">
-              <span class="btn" v-on:click="saveFile">
+              <span class="btn"
+                    v-on:click="saveFile(nomFichierstoSave)">
                 Entregister!
               </<span>
             </div>
 
-            <!---!--- MOI ---!---!>
+            <!---!--- MOI ---!- -->
           </div>
         </div>
       </div>
@@ -713,6 +714,7 @@
         </div>
       </div>
 
+
       <div class="btn-row">
         <button title="export dessin"
                 v-on:click="popups.showExpportPNG = !popups.showExpportPNG">
@@ -739,7 +741,7 @@
                     <span class="text-faded">
                       {{ save.name }}
                     </span>
-                  </span>
+             </span>
           </div>
         </div>
       </div>
@@ -871,11 +873,11 @@
             draw.redraw();
           },
       //<!----------------------------------------------------Fonctions AWS------------------------------------------------!>
-    saveFile : item => {
+    saveFile : function (name) {
       console.log(JSON.stringify(app.history))
       var toDataPost = {
         bucket: app.bucketName,
-        filename: app.nomFichierstoSave+'.txt',
+        filename: name+'.txt',
         body : app.history,
       }
       axios({
@@ -921,28 +923,58 @@
         .then(function (response) {
           console.log(response.data);
           historyItem.history = response.data
-          console.log(app.history)
-          //tempAlert(msg,duration)
         })
         .catch(function (error) {
-          // handle error
-          console.log("Le getFile à échoué");
+          console.log("Le getFile à échoué "+error);
         });
-      console.log("pret à etre push")
-      console.log(app.history)
+      console.log("pret à etre push");
+      console.log(app.history);
       app.save.saveItems.push(historyItem);
       app.save.name = "";
     },
     savePNG: function (name) {
-      var canvas = document.getElementById('c');
+      let canvas = document.getElementById('c');
       canvas.toBlob(function (blob) {
+        //
+        // console.log('blob string:');
+        // console.log(blob);
+        //
+        // let base64data='';
+        // let reader = new FileReader();
+        // reader.readAsArrayBuffer(blob);
+        // reader.onloadend = function() {
+        //   base64data = reader.result;
+        //    //console.log(base64data);
+        // };
+        // console.log('base64data:');
+        // console.log(base64data);
+        // let toDataPost = {
+        //   bucket: app.bucketName,
+        //   filename: name+'.png',
+        //   body : base64data
+        // };
+        // axios({
+        //   method: 'POST',
+        //   url: 'https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/CreatFile/?',
+        //   data: JSON.stringify(toDataPost),
+        //   headers: {
+        //     'Content-Type':'multipart/form-data'
+        //   }
+        // })
+        //   .then(function (response) {
+        //     console.log(blob);
+        //     console.log(response.data);
+        //   })
+        //   .catch(function (error) {
+        //     console.log('voici l\'erreur : '+error);
+        //   });
         saveAs(blob, app.nomFichierstoSave+".png");
-        console.log(blob);
       })
     }
   }
 });
 //<!-------------------------------------------------FIN Fonctions AWS------------------------------------------------!>
+
 class Draw {
   constructor() {
     this.c = document.getElementById('c');
