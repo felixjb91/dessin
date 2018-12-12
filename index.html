@@ -682,40 +682,69 @@
         <!------------------------------------------------------------------------------------------------------------->
       </div>
 
-            <div class="btn-row">
-              <button title="export dessin"
-                      v-on:click="popups.showExpportPNG = !popups.showExpportPNG">
-                    <!--  v-bind:class="{ active: popups.showExpportPNG }">-->
-                <i class="ion ion-android-image"></i>
-              </button>
+      <div class="btn-row">
+        <button title="export dessin"
+                v-on:click="popups.showExpportPNG = !popups.showExpportPNG">
+          <i class="ion ion-android-image"></i>
+        </button>
 
-              <div class="popup" v-if="popups.showExpportPNG">
-                <div class="popup-title">
-                  Dessin à exporter &nbsp;
-                </div>
+        <div class="popup" v-if="popups.showExpportPNG">
+          <div class="popup-title">
+            Dessin à exporter &nbsp;
+          </div>
+          <div class="form">
+            <input type="text"
+                   placeholder="Save name"
+                   v-model="nomFichierstoSave">
+            <div v-if="nomFichierstoSave < 3" class="text-faded">
+              <i>
+                Min 3 characters
+              </i>
+            </div>
+            <span class="btn"
+                  v-on:click="savePNG(nomFichierstoSave)">
+              Download dessin
 
+              <span class="text-faded">
+                {{ save.name }}
+              </span>
+            </span>
+          </div>
+        </div>
+      </div>
 
-                <div class="form">
-                  <input type="text"
-                         placeholder="Save name"
-                         v-model="nomFichierstoSave">
-                  <div v-if="nomFichierstoSave < 3" class="text-faded">
-                    <i>
-                      Min 3 characters
-                    </i>
-                  </div>
-                  <span class="btn"
-                        v-on:click="savePNG(nomFichierstoSave)">
+      <div class="btn-row">
+        <button title="export dessin"
+                v-on:click="popups.showExpportPNG = !popups.showExpportPNG">
+          <i class="ion ion-android-image"></i>
+        </button>
+
+        <div class="popup" v-if="popups.showExpportPNG">
+          <div class="popup-title">
+            Dessin à exporter &nbsp;
+          </div>
+          <div class="form">
+            <input type="text"
+                   placeholder="Save name"
+                   v-model="nomFichierstoSave">
+            <div v-if="nomFichierstoSave < 3" class="text-faded">
+              <i>
+                Min 3 characters
+              </i>
+            </div>
+            <span class="btn"
+                  v-on:click="savePNG(nomFichierstoSave)">
                     Download dessin
 
                     <span class="text-faded">
                       {{ save.name }}
                     </span>
                   </span>
-                </div>
+          </div>
+        </div>
+      </div>
 
-              </div>
-            </div>
+
 
             <div class="btn-row">
               <button v-on:click="popups.showWelcome = true" title="Made by Lixfe">
