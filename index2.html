@@ -659,7 +659,7 @@
       <div class="btn-row">
         <button title="import dessin"
                 v-on:click="mounted"
-                v-bind:class="{ active: popups.showImport }">
+                v-bind:class="popups.showImport = !popups.showImport">
           <i class="ion ion-android-download"></i>
         </button>
 
@@ -716,47 +716,14 @@
 
 
       <div class="btn-row">
-        <button title="export dessin"
-                v-on:click="popups.showExpportPNG = !popups.showExpportPNG">
-          <i class="ion ion-android-image"></i>
+        <button v-on:click="popups.showWelcome = true" title="Made by Lixfe">
+          <i class="ion ion-heart"></i>
         </button>
-
-        <div class="popup" v-if="popups.showExpportPNG">
-          <div class="popup-title">
-            Dessin à exporter &nbsp;
-          </div>
-          <div class="form">
-            <input type="text"
-                   placeholder="Save name"
-                   v-model="nomFichierstoSave">
-            <div v-if="nomFichierstoSave < 3" class="text-faded">
-              <i>
-                Min 3 characters
-              </i>
-            </div>
-            <span class="btn"
-                  v-on:click="savePNG(nomFichierstoSave)">
-                    Download dessin
-
-                    <span class="text-faded">
-                      {{ save.name }}
-                    </span>
-             </span>
-          </div>
-        </div>
       </div>
 
-
-
-            <div class="btn-row">
-              <button v-on:click="popups.showWelcome = true" title="Made by Lixfe">
-                <i class="ion ion-heart"></i>
-              </button>
-            </div>
-
-          </div>
-        </div>
-      </div>
+    </div>
+  </div>
+</div>
 
 
       <script src="canvas-toBlob.js"></script>
@@ -784,7 +751,8 @@
               showSave: false,
               showOptions: false,
               showImport: false,
-              showExpportPNG:false
+              showExpportPNG:false,
+              showImportPNG:false,
             },
             bucketName: 'appdessin',
             nomFichiers:null,
@@ -918,7 +886,7 @@
       var historyItem = {
         name: name,
         history: []
-      }
+      };
       axios.get('https://8y1uvpmjf0.execute-api.eu-west-3.amazonaws.com/FelixGetFile/?BUCKET_NAME='+app.bucketName+'&FILE_NAME=' +name)
         .then(function (response) {
           console.log(response.data);
@@ -971,6 +939,17 @@
         saveAs(blob, app.nomFichierstoSave+".png");
       })
     }
+    // popupsactive: (name) => {
+    //   var shaw = ['drawCanvas','showColor', 'showSize', 'showWelcome', 'showSave', 'showOptions', 'showImport', 'showExpportPNG', 'showImportPNG'];
+    //   for(i=0;i<shaw.length;i++){
+    //     let current=shaw[i];
+    //     if(current != name){
+    //       app.popups.current = false;
+    //       console.log(current)
+    //     }
+    //   }
+    //   app.popups.name = !app.popups.name;
+    // }
   }
 });
 //<!-------------------------------------------------FIN Fonctions AWS------------------------------------------------!>
