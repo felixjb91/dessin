@@ -1,6 +1,6 @@
 # dessin
 
-> A Vue.js project
+> A index.html project
 
 ## Build Setup
 
