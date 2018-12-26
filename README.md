@@ -1,6 +1,6 @@
-# dessin
+# Dessin - code source
 
-> A index.html project
+> index.html 
 
 # fonctions lambda AWS
 
