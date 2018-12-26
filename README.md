@@ -2,6 +2,10 @@
 
 > A index.html project
 
+# fonctions lambda AWS
+
+> Dans le dossier du même nom
+
 ## Build Setup
 
 ``` bash
